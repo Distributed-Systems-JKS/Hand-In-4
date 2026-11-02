@@ -1,0 +1,28 @@
+syntax = "proto3";
+option go_package = ;
+
+
+message Request {
+    int64 id;
+    int64 timestamp;
+}
+message Reply { 
+    int64 timestamp;
+    bool permission;
+}
+
+    
+
+message Empty {}
+
+service server {
+    rpc initialisation (stream Message) returns (stream Message) {};
+    rpc exit (Reply) returns (Reply) {};
+}
+
+service clientServer {
+    rpc req (Request){} returns (stream Reply);
+    rpc reply (Request) returns (Reply) {};
+}
+
+
