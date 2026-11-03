@@ -4,17 +4,27 @@ package grpc;
 
 option go_package = "/protobufs";
 
-service Greeter {
-    rpc sayHello (HelloRequest) returns (HelloResponse) {};
+service Client {
+    rpc RequestAccess (Request) returns (Response) {};
+    rpc ReplyToRequest (Response) returns (Empty){};
 }
 
-message HelloRequest {
-    string name = 1;
+message Request {
+    int64 id = 1;
+    int64 timestamp = 2;
 }
 
-message HelloResponse {
-    string message = 1;
+message Response {
+    int64 id = 1;
+    int64 timestamp = 2;
+    bool permission = 3;
 }
+
+message Empty {}
+
+
+
+
 
 /* 
 service clientServer {

@@ -1,4 +1,4 @@
-package main;
+package main
 
 import (
 	proto "Hand-In-4/grpc"
@@ -23,19 +23,25 @@ func main() {
 	defer conn.Close()
 
 	// Create the gRPC client stub
-	client := proto.NewGreeterClient(conn)
+	client := proto.NewClientClient(conn)
 
 	// Context and request payload idk if we need this?
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	// Call remote SayHello method
-	res, err := client.SayHello(ctx, &proto.HelloRequest{Name: "World"})
+
+	// Call remote requestAccess method
+	res, err := client.RequestAccess(ctx, &proto.Request{Id: 0, Timestamp: 1})
 	if err != nil {
 		log.Fatalf("Could not greet: %v", err)
 	}
 
-	log.Printf("Response from server: %s", res.GetMessage())
+	var permission string = "Access denied";
+	if (res.GetPermission()) {
+		permission = "Access granted"
+	}
+
+	log.Printf("Response from server: " + permission)
 	
 }
 
