@@ -23,7 +23,7 @@ func main() {
 	defer conn.Close()
 
 	// Create the gRPC client stub
-	client := proto.NewClientClient(conn)
+	client := proto.NewClientServerClient(conn)
 
 	// Context and request payload idk if we need this?
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)

@@ -4,7 +4,7 @@
 // 	protoc        v7.36.2
 // source: grpc/proto.proto
 
-package protobufs
+package proto
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -183,11 +183,10 @@ const file_grpc_proto_proto_rawDesc = "" +
 	"\n" +
 	"permission\x18\x03 \x01(\bR\n" +
 	"permission\"\a\n" +
-	"\x05Empty2k\n" +
-	"\x06Client\x120\n" +
+	"\x05Empty2q\n" +
+	"\fClientServer\x120\n" +
 	"\rRequestAccess\x12\r.grpc.Request\x1a\x0e.grpc.Response\"\x00\x12/\n" +
-	"\x0eReplyToRequest\x12\x0e.grpc.Response\x1a\v.grpc.Empty\"\x00B\fZ\n" +
-	"/protobufsb\x06proto3"
+	"\x0eReplyToRequest\x12\x0e.grpc.Response\x1a\v.grpc.Empty\"\x00B\tZ\a./protob\x06proto3"
 
 var (
 	file_grpc_proto_proto_rawDescOnce sync.Once
@@ -208,10 +207,10 @@ var file_grpc_proto_proto_goTypes = []any{
 	(*Empty)(nil),    // 2: grpc.Empty
 }
 var file_grpc_proto_proto_depIdxs = []int32{
-	0, // 0: grpc.Client.RequestAccess:input_type -> grpc.Request
-	1, // 1: grpc.Client.ReplyToRequest:input_type -> grpc.Response
-	1, // 2: grpc.Client.RequestAccess:output_type -> grpc.Response
-	2, // 3: grpc.Client.ReplyToRequest:output_type -> grpc.Empty
+	0, // 0: grpc.ClientServer.RequestAccess:input_type -> grpc.Request
+	1, // 1: grpc.ClientServer.ReplyToRequest:input_type -> grpc.Response
+	1, // 2: grpc.ClientServer.RequestAccess:output_type -> grpc.Response
+	2, // 3: grpc.ClientServer.ReplyToRequest:output_type -> grpc.Empty
 	2, // [2:4] is the sub-list for method output_type
 	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name

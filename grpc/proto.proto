@@ -2,10 +2,14 @@ syntax = "proto3";
 
 package grpc;
 
-option go_package = "/protobufs";
+option go_package = "./proto";
 
-service Client {
+service ClientServer {
+
+    // Called whenever a node wants to request access to the criticsl section
     rpc RequestAccess (Request) returns (Response) {};
+
+    // Called whenever a node replies to a peer's request
     rpc ReplyToRequest (Response) returns (Empty){};
 }
 
@@ -21,25 +25,4 @@ message Response {
 }
 
 message Empty {}
-
-
-
-
-
-/* 
-service clientServer {
-    rpc requestAccess (Request) returns (stream Reply) {};
-    rpc replyToRequest (Request) returns (Reply) {};
-}
-
-message Request {
-    int64 id = 1;
-    int64 timestamp = 2;
-}
-message Reply { 
-    int64 timestamp = 1;
-    bool permission = 2;
-}*/ 
-
-
 

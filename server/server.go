@@ -15,7 +15,7 @@ import (
 )
 // Defining a server struct that embeds the unimplemented server
 type server struct {
-	proto.UnimplementedClientServer
+	proto.UnimplementedClientServerServer
 	// slice eller que med clients?
 
 }
@@ -26,9 +26,10 @@ func (s *server) RequestAccess(ctx context.Context, req *proto.Request) (*proto.
 	return &proto.Response{Id: req.GetId(), Timestamp: req.GetTimestamp(), Permission: true}, nil // Permission her kommer an på response??
 }
 
-func (s *server) ReplyToRequest(ctx context.Context, res *proto.Response) (*proto.Response, error){
+func (s *server) ReplyToRequest(ctx context.Context, res *proto.Response) (*proto.Empty, error){
 	log.Printf("Received response from: %d", res.GetId())
-	return &proto.Response{Id: res.GetId(), Timestamp: res.GetTimestamp(), Permission: res.GetPermission()}, nil
+	// return &proto.Response{Id: res.GetId(), Timestamp: res.GetTimestamp(), Permission: res.GetPermission()}, nil
+	return &proto.Empty{}, nil
 }
 
 
@@ -42,7 +43,7 @@ func main() {
 
 	// Creating a new gRPC server instance
 	grpcServer := grpc.NewServer()
-	proto.RegisterClientServer(grpcServer, &server{})
+	proto.RegisterClientServerServer(grpcServer, &server{})
 
 
 	log.Printf("Server listening at %v", listener.Addr())
