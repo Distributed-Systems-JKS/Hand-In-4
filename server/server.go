@@ -35,22 +35,60 @@ func (s *server) ReplyToRequest(ctx context.Context, res *proto.Response) (*prot
 
 
 func main() {
-	// Listen on TCP port
-	listener, err := net.Listen("tcp", ":5050")
+	
+	// Listen on Node 1 port
+	listen1, err := net.Listen("tcp", ":5051")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	// Creating a new gRPC server instance
-	grpcServer := grpc.NewServer()
-	proto.RegisterClientServerServer(grpcServer, &server{})
+	// Listen on Node 2 port
+	listen2, err := net.Listen("tcp", ":5052")
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+
+	// Listen on Node 3 port
+	listen3, err := net.Listen("tcp", ":5053")
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
 
 
-	log.Printf("Server listening at %v", listener.Addr())
 
-	// Start serving requests
-	if err := grpcServer.Serve(listener); err != nil {
-		log.Fatalf("Failed to serve: %v", err)
+
+	// Creating a new gRPC server instance for Node 1
+	grpcServer1 := grpc.NewServer()
+	proto.RegisterClientServerServer(grpcServer1, &server{})
+	log.Printf("Server listening at Node 1: %v", listen1.Addr())
+
+	// Creating a new gRPC server instance for Node 2
+	grpcServer2 := grpc.NewServer()
+	proto.RegisterClientServerServer(grpcServer2, &server{})
+	log.Printf("Server listening at Node 2: %v", listen2.Addr())
+
+	// Creating a new gRPC server instance for Node 3
+	grpcServer3 := grpc.NewServer()
+	proto.RegisterClientServerServer(grpcServer3, &server{})
+	log.Printf("Server listening at Node 3: %v", listen3.Addr())
+
+
+
+
+
+	// Start serving requests for Node 1
+	if err := grpcServer1.Serve(listen1); err != nil {
+		log.Fatalf("Failed to serve Node 1: %v", err)
+	}
+
+	// Start serving requests for Node 2
+	if err := grpcServer2.Serve(listen2); err != nil {
+		log.Fatalf("Failed to serve Node 2: %v", err)
+	}
+
+	// Start serving requests for Node 3
+	if err := grpcServer3.Serve(listen3); err != nil {
+		log.Fatalf("Failed to serve Node 3: %v", err)
 	}
 
 }
