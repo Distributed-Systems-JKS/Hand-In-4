@@ -6,7 +6,7 @@ option go_package = "./proto";
 
 service ClientServer {
 
-    // Called whenever a node wants to request access to the criticsl section
+    // Called whenever a node wants to request access to the critical section
     rpc RequestAccess (Request) returns (Response) {};
 
     // Called whenever a node replies to a peer's request

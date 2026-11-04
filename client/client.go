@@ -5,6 +5,7 @@ import (
 	// "fmt"
 	// "sync"
 	"context"
+	"flag"
 	"log"
 	"time"
 
@@ -15,8 +16,14 @@ import (
 
 func main() {
 
+	// Default address and port 
+	serverAddr := flag.String("addr", "localhost:5050", "Address of the gRPC server")
+	flag.Parse()
+
+	log.Printf("Connecting to gRPC server to %s", *serverAddr)
+
 	// Establish connection
-	conn, err := grpc.NewClient("localhost:5050", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(*serverAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("Did not connect: %v", err)
 	}

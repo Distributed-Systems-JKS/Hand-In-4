@@ -1,22 +1,47 @@
 //states: RELEASED, WANTED, HELD
 
-package main;
+package main
 
 import (
 	proto "Hand-In-4/grpc"
-	// "fmt"
+	"fmt"
+
+	//"fmt"
 	// "sync"
+	//"config"
+	"context"
 	"log"
 	"net"
-	"context"
+	"flag"
 
 	"google.golang.org/grpc"
-
 )
+
+/*
+type state int //state of the node
+
+const (
+	RELEASED state = iota //Not requesting the critical section
+	WANTED //Requesting the critical section, and waiting for permission from other nodes
+	HELD //In the critical section
+)
+*/
+
 // Defining a server struct that embeds the unimplemented server
 type server struct {
 	proto.UnimplementedClientServerServer
-	// slice eller que med clients?
+
+	/*
+	id int64
+	lamportClock int64
+	mu sync.Mutex //to protect state, timestamp, and lamportClock
+	state state //which state is the node in
+	timestamp int64 //timestamp of the request for the critical section, so important for state == WANTED
+
+	requestQueue []int 64 //queue containing client o to hold FIFO : keep track of requests from other nodes, so we can reply to them when current node is leaving CS
+	
+	?is there other fields missing??
+	*/
 
 }
 
@@ -33,12 +58,18 @@ func (s *server) ReplyToRequest(ctx context.Context, res *proto.Response) (*prot
 }
 
 
-
 func main() {
+
+	// Default port
+	portFlag := flag.String("port", "5050", "The port for this server to listen on")
+	flag.Parse()
+
+	address := fmt.Sprintf(":%s", *portFlag)
+
 	// Listen on TCP port
-	listener, err := net.Listen("tcp", ":5050")
+	listener, err := net.Listen("tcp", address)
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		log.Fatalf("failed to listen on %s: %v", address, err)
 	}
 
 	// Creating a new gRPC server instance
@@ -46,7 +77,7 @@ func main() {
 	proto.RegisterClientServerServer(grpcServer, &server{})
 
 
-	log.Printf("Server listening at %v", listener.Addr())
+	log.Printf("Server listening on %s", address)
 
 	// Start serving requests
 	if err := grpcServer.Serve(listener); err != nil {
@@ -55,4 +86,6 @@ func main() {
 
 }
 
-
+func startServer(address string){
+	
+}
