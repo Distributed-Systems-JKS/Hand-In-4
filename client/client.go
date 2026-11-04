@@ -2,43 +2,55 @@ package main
 
 import (
 	proto "Hand-In-4/grpc"
+	"strconv"
+
 	// "fmt"
 	// "sync"
 	"context"
-	"flag"
 	"log"
-	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	//"google.golang.org/grpc/metadata"
 )
 
 
 func main() {
 
 	// Default address and port 
-	serverAddr := flag.String("addr", "localhost:5050", "Address of the gRPC server")
-	flag.Parse()
+	var basePort string = "localhost:505";
 
-	log.Printf("Connecting to gRPC server to %s", *serverAddr)
-
-	// Establish connection
-	conn, err := grpc.NewClient(*serverAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		log.Fatalf("Did not connect: %v", err)
+	var clients[3] proto.ClientServerClient
+	for i := 0; i < 3; i++ {
+		log.Printf("Connecting to gRPC server on port 505" + strconv.Itoa(i))
+		conn, err := grpc.NewClient(basePort + strconv.Itoa(i), grpc.WithTransportCredentials(insecure.NewCredentials()))
+		if err != nil {
+			log.Fatalf("Did not connect: %v", err)
+		}
+		defer conn.Close()
+		clients[i] = proto.NewClientServerClient(conn)
 	}
-	defer conn.Close()
+
+	
+
+//From previous assignment 
+/*Doesn't work the same way as before, since we are not using a stream anymore.
+	header, err := streamMessage.Header()
+	if err != nil {
+		log.Fatalf("failed to get header from stream: %v", err) 
+	}
+	id := header["client-id"][0] 
+	*/
+
+	
+
 
 	// Create the gRPC client stub
-	client := proto.NewClientServerClient(conn)
+	// client := proto.NewClientServerClient(conn)
 
-	// Context and request payload idk if we need this?
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-
-
+	
 	// Call remote requestAccess method
-	res, err := client.RequestAccess(ctx, &proto.Request{Id: 0, Timestamp: 1})
+	res, err := clients[0].RequestAccess(context.Background(), &proto.Request{Id: 0, Timestamp: 1})
 	if err != nil {
 		log.Fatalf("Could not greet: %v", err)
 	}

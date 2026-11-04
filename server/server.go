@@ -1,5 +1,3 @@
-//states: RELEASED, WANTED, HELD
-
 package main
 
 import (
@@ -7,51 +5,83 @@ import (
 	"fmt"
 
 	//"fmt"
-	// "sync"
+	"sync"
 	//"config"
 	"context"
+	"flag"
 	"log"
 	"net"
-	"flag"
+	//"strconv"
 
 	"google.golang.org/grpc"
+	//"google.golang.org/grpc/metadata"
 )
 
 /*
 type state int //state of the node
 
-const (
+const ( //states: RELEASED, WANTED, HELD
 	RELEASED state = iota //Not requesting the critical section
 	WANTED //Requesting the critical section, and waiting for permission from other nodes
 	HELD //In the critical section
 )
 */
 
+
+//From previous assignment
+/*
+header := metadata.New(map[string]string{"client-id":strconv.Itoa(clientId)})
+	grpc.SendHeader(header) 
+	*/
+
+
 // Defining a server struct that embeds the unimplemented server
 type server struct {
 	proto.UnimplementedClientServerServer
 
-	/*
 	id int64
-	lamportClock int64
+	lamportClock int64 //changes for every local event 
 	mu sync.Mutex //to protect state, timestamp, and lamportClock
-	state state //which state is the node in
-	timestamp int64 //timestamp of the request for the critical section, so important for state == WANTED
+	//state state //which state is the node in
+	timestamp int64 //timestamp of the CURRENT request for the critical section, so important for state == WANTED
 
-	requestQueue []int 64 //queue containing client o to hold FIFO : keep track of requests from other nodes, so we can reply to them when current node is leaving CS
+	//requestQueue []int 64 //queue containing client o to hold FIFO : keep track of requests from other nodes, so we can reply to them when current node is leaving CS
 	
-	?is there other fields missing??
-	*/
+	//?is there other fields missing??
+	
 
 }
 
 // Implementing RequestAccess method defined in the .proto file
 func (s *server) RequestAccess(ctx context.Context, req *proto.Request) (*proto.Response, error){
+	s.mu.Lock()
+	if (req.GetTimestamp() > s.timestamp){ 
+		s.timestamp = req.GetTimestamp()
+	}	
+	s.timestamp++ //incrementing the timestamp of the current node, so it is always greater than the timestamp of the request
+	//|| (req.GetTimestamp() == s.timestamp && req.GetId() > s.id) //if the timestamps are equal, we compare the ids of the nodes to break the tie
+
+	//something something - K
+
+	//compare the timestamps of the request and the current node, and if the request has a higher timestamp, we update the timestamp of the current node to be the same as the request's timestamp. This ensures that the current node's timestamp is always greater than or equal to any incoming request's timestamp.
+	//defer if s.state == WANTED ??
+	
+	s.mu.Unlock()
+	
 	log.Printf("Received request from: %d", req.GetId())
 	return &proto.Response{Id: req.GetId(), Timestamp: req.GetTimestamp(), Permission: true}, nil // Permission her kommer an på response??
 }
 
 func (s *server) ReplyToRequest(ctx context.Context, res *proto.Response) (*proto.Empty, error){
+	s.mu.Lock() 
+	if (res.GetTimestamp() > s.timestamp){
+		s.timestamp = res.GetTimestamp()
+	}
+	s.timestamp++ //incrementing the timestamp since a message is always an event
+	s.mu.Unlock()
+
+	//something something - K
+	
 	log.Printf("Received response from: %d", res.GetId())
 	// return &proto.Response{Id: res.GetId(), Timestamp: res.GetTimestamp(), Permission: res.GetPermission()}, nil
 	return &proto.Empty{}, nil
@@ -72,6 +102,31 @@ func main() {
 		log.Fatalf("failed to listen on %s: %v", address, err)
 	}
 
+	// Wait for new connections
+	for {
+		// Accept new connections
+		c, err := listener.Accept()
+		if err != nil {
+			log.Printf("Listener returned: %s", err)
+			break
+		}
+	
+		// Start new Goroutine to handle new connection
+		go func() {
+			//defer c.Close()
+			log.Printf("New connection created")
+
+			// Writing something for now and closing the sessions
+			_, err := c.Write([]byte("Helloooo"))
+			if err != nil {
+				log.Printf("Unable to write on connection: %s", err)
+			}
+		}()
+	}
+
+
+
+
 	// Creating a new gRPC server instance
 	grpcServer := grpc.NewServer()
 	proto.RegisterClientServerServer(grpcServer, &server{})
@@ -84,8 +139,4 @@ func main() {
 		log.Fatalf("Failed to serve: %v", err)
 	}
 
-}
-
-func startServer(address string){
-	
 }
