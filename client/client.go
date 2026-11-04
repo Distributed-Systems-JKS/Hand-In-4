@@ -1,8 +1,8 @@
-package main
+package client
 
 import (
 	proto "Hand-In-4/grpc"
-	"strconv"
+	//"strconv"
 
 	// "fmt"
 	// "sync"
@@ -15,23 +15,55 @@ import (
 )
 
 
-func main() {
 
-	// Default address and port 
-	var basePort string = "localhost:505";
+func RunClient(connections map[int]string, address string, myId int64) {
+	
+	clients := make(map[int]proto.ClientServerClient)
 
-	var clients[3] proto.ClientServerClient
-	for i := 0; i < 3; i++ {
-		log.Printf("Connecting to gRPC server on port 505" + strconv.Itoa(i))
-		conn, err := grpc.NewClient(basePort + strconv.Itoa(i), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	for id, addr := range connections {
+
+		log.Printf("Connecting to gRPC server on port" + address)
+
+		conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			log.Fatalf("Did not connect: %v", err)
 		}
-		defer conn.Close()
-		clients[i] = proto.NewClientServerClient(conn)
+		clients[id] = proto.NewClientServerClient(conn)
+
 	}
 
+
+	for targetId := range connections {
+		// Skip own id
+		
+		log.Printf("Client %d sending RequestAccess to Node %d...", myId, targetId)
+		res, err := clients[targetId].RequestAccess(context.Background(), &proto.Request{
+			Id: 		myId, 
+			Timestamp: 	1,
+		})
+		if err != nil {
+			log.Fatalf("Could not request access: %v", err)
+		}
+
+		var permission string = "Access denied";
+		if (res.GetPermission()) {
+			permission = "Access granted"
+		}
+
+		log.Printf("Response from server: " + permission)
 	
+
+
+	}
+	
+
+
+
+
+	
+}
+
+
 
 //From previous assignment 
 /*Doesn't work the same way as before, since we are not using a stream anymore.
@@ -50,18 +82,5 @@ func main() {
 
 	
 	// Call remote requestAccess method
-	res, err := clients[0].RequestAccess(context.Background(), &proto.Request{Id: 0, Timestamp: 1})
-	if err != nil {
-		log.Fatalf("Could not greet: %v", err)
-	}
 
-	var permission string = "Access denied";
-	if (res.GetPermission()) {
-		permission = "Access granted"
-	}
-
-	log.Printf("Response from server: " + permission)
 	
-}
-
-

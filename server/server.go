@@ -1,14 +1,14 @@
-package main
+package server
 
 import (
 	proto "Hand-In-4/grpc"
-	"fmt"
+	//"fmt"
 
 	//"fmt"
 	"sync"
 	//"config"
 	"context"
-	"flag"
+	//"flag"
 	"log"
 	"net"
 	//"strconv"
@@ -38,7 +38,6 @@ header := metadata.New(map[string]string{"client-id":strconv.Itoa(clientId)})
 // Defining a server struct that embeds the unimplemented server
 type server struct {
 	proto.UnimplementedClientServerServer
-
 	id int64
 	lamportClock int64 //changes for every local event 
 	mu sync.Mutex //to protect state, timestamp, and lamportClock
@@ -88,20 +87,27 @@ func (s *server) ReplyToRequest(ctx context.Context, res *proto.Response) (*prot
 }
 
 
-func main() {
+func StartServer(address string, id int64) {
 
-	// Default port
-	portFlag := flag.String("port", "5050", "The port for this server to listen on")
-	flag.Parse()
-
-	address := fmt.Sprintf(":%s", *portFlag)
-
-	// Listen on TCP port
+	
 	listener, err := net.Listen("tcp", address)
 	if err != nil {
 		log.Fatalf("failed to listen on %s: %v", address, err)
 	}
 
+	grpcServer := grpc.NewServer()
+	proto.RegisterClientServerServer(grpcServer, &server{id: id})
+
+	log.Printf("Server listening on %s", address)
+
+	if err := grpcServer.Serve(listener); err != nil {
+		log.Fatalf("Failed to serve: %v", err)
+	}
+
+
+}
+
+/*
 	// Wait for new connections
 	for {
 		// Accept new connections
@@ -110,7 +116,21 @@ func main() {
 			log.Printf("Listener returned: %s", err)
 			break
 		}
-	
+
+		// Creating a new gRPC server instance
+		
+
+
+
+
+	// Start serving requests
+	if err := grpcServer.Serve(listener); err != nil {
+		log.Fatalf("Failed to serve: %v", err)
+	}
+
+
+
+		
 		// Start new Goroutine to handle new connection
 		go func() {
 			//defer c.Close()
@@ -121,22 +141,4 @@ func main() {
 			if err != nil {
 				log.Printf("Unable to write on connection: %s", err)
 			}
-		}()
-	}
-
-
-
-
-	// Creating a new gRPC server instance
-	grpcServer := grpc.NewServer()
-	proto.RegisterClientServerServer(grpcServer, &server{})
-
-
-	log.Printf("Server listening on %s", address)
-
-	// Start serving requests
-	if err := grpcServer.Serve(listener); err != nil {
-		log.Fatalf("Failed to serve: %v", err)
-	}
-
-}
+		}()*/
