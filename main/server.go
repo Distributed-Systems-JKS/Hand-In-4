@@ -64,9 +64,21 @@ func (s *server) RequestAccess(ctx context.Context, req *proto.Request) (*proto.
 	s.timestamp++ //incrementing the timestamp of the current node, so it is always greater than the timestamp of the request
 	//|| (req.GetTimestamp() == s.timestamp && req.GetId() > s.id) //if the timestamps are equal, we compare the ids of the nodes to break the tie
 
-
+	//Defer the reply; if we are in HELD (CS) or WANTED (requesting CS), we will not reply to the request immediately, but instead defer the reply until we are done with the CS. 
+	//This is done by adding the request to a queue, and replying to it when we are done with the CS.
+	defer := false
 	
-
+	if (s.state == HELD ){
+		defer = true
+	} else if (s.state == WANTED){
+		//Check if the node in CS has a higher timestamp than the request we are currently processing. If it does, we will defer the reply until we are done with the CS.
+		if (s.timestamp < req.GetTimestamp() || (s.timestamp == req.GetTimestamp() && s.id < req.GetId())){
+			defer = true
+		}
+	}
+	
+	
+	
 	//compare the timestamps of the request and the current node, and if the request has a higher timestamp, we update the timestamp of the current node to be the same as the request's timestamp. This ensures that the current node's timestamp is always greater than or equal to any incoming request's timestamp.
 	//defer if s.state == WANTED ??
 	
