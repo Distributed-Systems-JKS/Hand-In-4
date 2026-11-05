@@ -3,7 +3,8 @@ How to start our system
 
 Our program works for three nodes, no more or less
 
-
+-- run with the main-folder ---
+go run ./main  -port=5051
 
 --- Egne noter ---
 Run server with port 5051

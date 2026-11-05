@@ -8,7 +8,7 @@ import (
 	"sync"
 	//"config"
 	"context"
-	"flag"
+	//"flag"
 	"log"
 	"net"
 	//"strconv"
@@ -54,6 +54,7 @@ type server struct {
 
 // Implementing RequestAccess method defined in the .proto file
 func (s *server) RequestAccess(ctx context.Context, req *proto.Request) (*proto.Response, error){
+	fmt.Println("Request")
 	s.mu.Lock()
 	if (req.GetTimestamp() > s.timestamp){ 
 		s.timestamp = req.GetTimestamp()
@@ -88,21 +89,16 @@ func (s *server) ReplyToRequest(ctx context.Context, res *proto.Response) (*prot
 }
 
 
-func main() {
+func makeServer(port string) {
 
-	// Default port
-	portFlag := flag.String("port", "5050", "The port for this server to listen on")
-	flag.Parse()
-
-	address := fmt.Sprintf(":%s", *portFlag)
 
 	// Listen on TCP port
-	listener, err := net.Listen("tcp", address)
+	listener, err := net.Listen("tcp", port)
 	if err != nil {
-		log.Fatalf("failed to listen on %s: %v", address, err)
+		log.Fatalf("failed to listen on %s: %v", port, err)
 	}
 
-	// Wait for new connections
+	/*// Wait for new connections
 	for {
 		// Accept new connections
 		c, err := listener.Accept()
@@ -122,7 +118,7 @@ func main() {
 				log.Printf("Unable to write on connection: %s", err)
 			}
 		}()
-	}
+	}*/
 
 
 
@@ -132,11 +128,12 @@ func main() {
 	proto.RegisterClientServerServer(grpcServer, &server{})
 
 
-	log.Printf("Server listening on %s", address)
+	log.Printf("Server listening on %s", port)
 
 	// Start serving requests
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}
+
 
 }
