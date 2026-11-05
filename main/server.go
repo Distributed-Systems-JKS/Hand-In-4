@@ -54,15 +54,18 @@ type server struct {
 
 // Implementing RequestAccess method defined in the .proto file
 func (s *server) RequestAccess(ctx context.Context, req *proto.Request) (*proto.Response, error){
-	fmt.Println("Request")
+	fmt.Println("Request received")
 	s.mu.Lock()
+
+	//Lamport clock update
 	if (req.GetTimestamp() > s.timestamp){ 
 		s.timestamp = req.GetTimestamp()
 	}	
 	s.timestamp++ //incrementing the timestamp of the current node, so it is always greater than the timestamp of the request
 	//|| (req.GetTimestamp() == s.timestamp && req.GetId() > s.id) //if the timestamps are equal, we compare the ids of the nodes to break the tie
 
-	//something something - K
+
+	
 
 	//compare the timestamps of the request and the current node, and if the request has a higher timestamp, we update the timestamp of the current node to be the same as the request's timestamp. This ensures that the current node's timestamp is always greater than or equal to any incoming request's timestamp.
 	//defer if s.state == WANTED ??
