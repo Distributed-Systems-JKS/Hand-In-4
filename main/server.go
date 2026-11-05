@@ -77,7 +77,14 @@ func (s *server) RequestAccess(ctx context.Context, req *proto.Request) (*proto.
 		}
 	}
 	
-	
+	if defer {
+		//Save the id of the request in a queue, so we can reply to it later when we are done with the CS.
+		s.requestQueue = append(s.requestQueue, req.GetId())
+		s.mu.Unlock() //Unlocking the mutex before returning, so we can reply to the request later when we are done with the CS.
+		log.Printf("Deferring reply to request from: %d", req.GetId())
+		//Returning a response with permission set to false -> request is deferred and will be replied to later. 
+		return &proto.Response{Id: req.GetId(), Timestamp: req.GetTimestamp(), Permission: false}, nil // Permission her kommer an på response??
+	}
 	
 	//compare the timestamps of the request and the current node, and if the request has a higher timestamp, we update the timestamp of the current node to be the same as the request's timestamp. This ensures that the current node's timestamp is always greater than or equal to any incoming request's timestamp.
 	//defer if s.state == WANTED ??
