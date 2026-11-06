@@ -17,7 +17,7 @@ import (
 	//"google.golang.org/grpc/metadata"
 )
 
-/*
+
 type state int //state of the node
 
 const ( //states: RELEASED, WANTED, HELD
@@ -25,8 +25,6 @@ const ( //states: RELEASED, WANTED, HELD
 	WANTED //Requesting the critical section, and waiting for permission from other nodes
 	HELD //In the critical section
 )
-*/
-
 
 //From previous assignment
 /*
@@ -42,13 +40,9 @@ type server struct {
 	id int64
 	lamportClock int64 //changes for every local event 
 	mu sync.Mutex //to protect state, timestamp, and lamportClock
-	//state state //which state is the node in
+	state state //which state is the node in
 	timestamp int64 //timestamp of the CURRENT request for the critical section, so important for state == WANTED
-
-	//requestQueue []int 64 //queue containing client o to hold FIFO : keep track of requests from other nodes, so we can reply to them when current node is leaving CS
-	
-	//?is there other fields missing??
-	
+	requestQueue []int64 //queue containing client ids to hold FIFO : keep track of requests from other nodes, so we can reply to them when current node is leaving CS
 
 }
 
@@ -83,9 +77,8 @@ func (s *server) RequestAccess(ctx context.Context, req *proto.Request) (*proto.
 		s.mu.Unlock() //Unlocking the mutex before returning, so we can reply to the request later when we are done with the CS.
 		log.Printf("Deferring reply to request from: %d", req.GetId())
 		//Returning a response with permission set to false -> request is deferred and will be replied to later. 
-		return &proto.Response{Id: req.GetId(), Timestamp: req.GetTimestamp(), Permission: false}, nil // Permission her kommer an på response??
+		return &proto.Response{Id: req.GetId(), Timestamp: req.GetTimestamp(), Permission: false}, nil // Permission her kommer an på response
 	}
-	
 	
 	s.mu.Unlock()
 	
