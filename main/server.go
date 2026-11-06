@@ -88,14 +88,25 @@ func (s *server) RequestAccess(ctx context.Context, req *proto.Request) (*proto.
 
 func (s *server) ReplyToRequest(ctx context.Context, res *proto.Response) (*proto.Empty, error){
 	s.mu.Lock() 
-	if (res.GetTimestamp() > s.timestamp){
-		s.timestamp = res.GetTimestamp()
+	if (res.GetTimestamp() > s.lamportClock){ 
+		s.lamportClock = res.GetTimestamp() //updating the lamport clock of the current node to be greater than the timestamp of the request we are currently processing
 	}
-	s.timestamp++ //incrementing the timestamp since a message is always an event
+	s.lamportClock++ //incrementing the lamport clock of the current node, so it is always greater than the timestamp of the request
 	s.mu.Unlock()
 
-	//something something - K
-	
+	if s.state == WANTED {
+		s.replyCount++ //incrementing the number of replies we have received from other nodes
+		log.Printf("Received reply from: %d, total replies: %d", res.GetId(), s.replyCount)
+		
+		//If we are in WANTED state, we will check if we have received permission from all other nodes. If we have, we can enter the critical section.
+		//We will check if we have received permission from all other nodes by checking if the number of replies we have received is equal to the number of nodes in the system.
+		
+		
+		//If we have received permission from all other nodes, we can enter the critical section.
+		//We will also check if we have received permission from all other nodes by checking if the number of replies we have received is equal to the number of nodes in the system.
+		}
+
+
 	log.Printf("Received response from: %d", res.GetId())
 	// return &proto.Response{Id: res.GetId(), Timestamp: res.GetTimestamp(), Permission: res.GetPermission()}, nil
 	return &proto.Empty{}, nil
