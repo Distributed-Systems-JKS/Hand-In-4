@@ -3,7 +3,6 @@ package main
 import (
 	proto "Hand-In-4/grpc"
 	"strconv"
-
 	"fmt"
 	// "sync"
 	"context"
@@ -15,14 +14,10 @@ import (
 )
 
 
-
-
 func makeClient(port string) {
-
+	
 	conn, err := grpc.NewClient(port, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	client := proto.NewClientServerClient(conn)
-	
-	
 
 	var clients[3] proto.ClientServerClient
 	for i := 0; i < 3; i++ {
@@ -59,6 +54,11 @@ func makeClient(port string) {
 	fmt.Println("ACCESS?");
 
 	//log.Printf("Response from server: " + permission)
+
+	
+}
+
+func enter() {
 
 	
 }
