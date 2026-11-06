@@ -89,7 +89,7 @@ func (s *server) RequestAccess(ctx context.Context, req *proto.Request) (*proto.
 func (s *server) ReplyToRequest(ctx context.Context, res *proto.Response) (*proto.Empty, error){
 	s.mu.Lock() 
 	if (res.GetTimestamp() > s.lamportClock){ 
-		s.lamportClock = res.GetTimestamp() //updating the lamport clock of the current node to be greater than the timestamp of the request we are currently processing
+		s.lamportClock = res.GetTimestamp() //updating the lamport clock of the current node 
 	}
 	s.lamportClock++ //incrementing the lamport clock of the current node, so it is always greater than the timestamp of the request
 	s.mu.Unlock()
@@ -101,7 +101,7 @@ func (s *server) ReplyToRequest(ctx context.Context, res *proto.Response) (*prot
 		//If we are in WANTED state, we will check if we have received permission from all other nodes. If we have, we can enter the critical section.
 		//We will check if we have received permission from all other nodes by checking if the number of replies we have received is equal to the number of nodes in the system.
 		
-		
+		//Here we have to signal that we have received permission from all other nodes, so we can enter the critical section. This can be done by using a channel or a condition variable. For now, we will just log that we have received permission from all other nodes.
 		//If we have received permission from all other nodes, we can enter the critical section.
 		//We will also check if we have received permission from all other nodes by checking if the number of replies we have received is equal to the number of nodes in the system.
 		}
@@ -149,7 +149,7 @@ func makeServer(port string) {
 
 	// Creating a new gRPC server instance
 	grpcServer := grpc.NewServer()
-	proto.RegisterClientServerServer(grpcServer, &server{})
+	proto.RegisterClientServerServer(grpcServer, &server{}) //Its empty?? 
 
 
 	log.Printf("Server listening on %s", port)
