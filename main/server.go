@@ -73,7 +73,7 @@ func (s *server) RequestAccess(ctx context.Context, req *proto.Request) (*proto.
 	} else if (s.state == WANTED){
 		//Check if the node in CS has a higher timestamp than the request we are currently processing. If it does, we will defer the reply until we are done with the CS.
 		if (s.timestamp < req.GetTimestamp() || (s.timestamp == req.GetTimestamp() && s.id < req.GetId())){
-			defer = true
+			defer = true //defer if s.state == WANTED 
 		}
 	}
 	
@@ -86,8 +86,6 @@ func (s *server) RequestAccess(ctx context.Context, req *proto.Request) (*proto.
 		return &proto.Response{Id: req.GetId(), Timestamp: req.GetTimestamp(), Permission: false}, nil // Permission her kommer an på response??
 	}
 	
-	//compare the timestamps of the request and the current node, and if the request has a higher timestamp, we update the timestamp of the current node to be the same as the request's timestamp. This ensures that the current node's timestamp is always greater than or equal to any incoming request's timestamp.
-	//defer if s.state == WANTED ??
 	
 	s.mu.Unlock()
 	
