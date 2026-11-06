@@ -15,6 +15,8 @@ import (
 )
 
 
+
+
 func makeClient(port string) {
 
 	conn, err := grpc.NewClient(port, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -39,19 +41,6 @@ func makeClient(port string) {
 		}
 		
 	}
-
-	
-
-//From previous assignment 
-/*Doesn't work the same way as before, since we are not using a stream anymore.
-	header, err := streamMessage.Header()
-	if err != nil {
-		log.Fatalf("failed to get header from stream: %v", err) 
-	}
-	id := header["client-id"][0] 
-	*/
-
-	
 
 
 	// Create the gRPC client stub

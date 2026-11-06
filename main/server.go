@@ -15,7 +15,7 @@ import (
 	//"strconv"
 
 	"google.golang.org/grpc"
-	//"google.golang.org/grpc/metadata"
+	
 )
 
 type state int //state of the node
@@ -26,11 +26,6 @@ const ( //states: RELEASED, WANTED, HELD
 	HELD                  //In the critical section
 )
 
-//From previous assignment
-/*
-header := metadata.New(map[string]string{"client-id":strconv.Itoa(clientId)})
-	grpc.SendHeader(header)
-*/
 
 // Defining a server struct that embeds the unimplemented server
 type server struct {
