@@ -33,18 +33,14 @@ type server struct {
 // Implementing RequestAccess method defined in the .proto file
 func (s *server) RequestAccess(ctx context.Context, req *proto.Request) (*proto.Response, error) {
 	node.mu.Lock()
+	//Lamport clock sync
 	node.lamportClock = max(node.lamportClock, req.GetTimestamp()) + 1
 	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  "] received access request from Node" + strconv.Itoa(int(req.Id)) + " at lamport clock " + strconv.Itoa(int(node.lamportClock)))
 	
+	//making a copy of the queue to ensure that it will not be changed by others
 	ch := node.requestQueue
 
-	//Lamport clock update
-	
-	
-	//|| (req.GetTimestamp() == s.timestamp && req.GetId() > s.id) //if the timestamps are equal, we compare the ids of the nodes to break the tie
-
 	//Defer the reply; if we are in HELD (CS) or WANTED (requesting CS), we will not reply to the request immediately, but instead defer the reply until we are done with the CS.
-	//This is done by adding the request to a queue, and replying to it when we are done with the CS.
 	useDefer := false
 
 	if node.state == "HELD" {
@@ -65,13 +61,13 @@ func (s *server) RequestAccess(ctx context.Context, req *proto.Request) (*proto.
 
 	node.mu.Unlock()
 	if useDefer {
-		<- ch
+		<- ch //wait on the channel closing, when it is, then the code will continue running
 	}
 	
 
 	node.lamportClock++
 	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  "] is in state " + node.state + " and is now replying to Node" + strconv.Itoa(int(req.Id)) + " at lamport clock " + strconv.Itoa(int(node.lamportClock)))
-	return &proto.Response{Id: node.id, Timestamp: node.lamportClock, Permission: true}, nil // Permission her kommer an på response??
+	return &proto.Response{Id: node.id, Timestamp: node.lamportClock, Permission: true}, nil 
 }
 
 

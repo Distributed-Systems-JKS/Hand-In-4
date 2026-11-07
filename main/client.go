@@ -58,8 +58,8 @@ func enter(clients[2] proto.ClientServerClient) {
 	time.Sleep(time.Duration(timer)*time.Second)
 	
 	node.mu.Lock()
+	//updating the state, clock and making the requestQueue
 	node.state = "WANTED"
-	node.timestamp = node.lamportClock
 	node.requestQueue = make(chan struct{})
 
 	// -- UPDATING LAMPORT CLOCK --
@@ -75,7 +75,7 @@ func enter(clients[2] proto.ClientServerClient) {
 	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +"] is sending access request with timestamp " + strconv.Itoa(int(node.timestamp)) + " to all other nodes at lamport clock " + strconv.Itoa(int(node.lamportClock)))
 	for i := range clients{
 		go func(i int){
-			defer wg.Done()
+			defer wg.Done() //when this go-routine is finished, we "mark" it as done
 			reply, err := clients[i].RequestAccess(context.Background(), &proto.Request{Id: node.id, Timestamp: node.timestamp}, grpc.WaitForReady(true))
 		
 		if err != nil {
@@ -84,6 +84,7 @@ func enter(clients[2] proto.ClientServerClient) {
 		}
 
 		node.mu.Lock()
+		//Syncing the lamportclock
 		node.lamportClock = max(node.lamportClock,reply.GetTimestamp()) + 1
 		node.mu.Unlock()
 
@@ -93,13 +94,12 @@ func enter(clients[2] proto.ClientServerClient) {
 	}(i)
 	}
 	
-	wg.Wait() //Code after this can be run after the twi go-routines (the reply to request) in the loop are finished
+	wg.Wait() //Code after this can be run after the two go-routines (the reply to request access) in the loop are done
 	
 	inCriticalSection()
 
 	timer = rand.Intn(10)
-
-	time.Sleep(time.Duration(timer)*time.Second)
+	time.Sleep(time.Duration(timer)*time.Second) //random timer i
 
 	leaveCriticalSection()
 
@@ -126,6 +126,7 @@ func leaveCriticalSection(){
 	node.mu.Unlock()
 	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  "] left Critical Section and state is " + node.state + " at lamport clock " + strconv.Itoa(int(node.lamportClock)))
 	node.mu.Lock()
+	//close channel, so it will no longer block RequestAccess and this node can now reply to other requests
 	close(node.requestQueue)
 	node.mu.Unlock()
 }
