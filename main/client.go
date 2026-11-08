@@ -53,7 +53,7 @@ func makeClient(port string) {
 func enter(clients[2] proto.ClientServerClient) {
 	var wg sync.WaitGroup
 
-	timer := rand.Intn(7) + 3 //random int from 3 to 10
+	timer := rand.Intn(5) + 5 //random int from 5 to 10
 	// Doesnt need to be logged so just printing in terminal for our own sake to see that the program is running but just has a delay.. 
 	fmt.Println("[Node" + strconv.Itoa(int(node.id)) +  "] waiting " + strconv.Itoa(int(timer)) + " until requesting access")
 	time.Sleep(time.Duration(timer)*time.Second)
