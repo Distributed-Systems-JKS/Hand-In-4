@@ -117,6 +117,7 @@ func inCriticalSection(){
 	node.lamportClock++
 	node.mu.Unlock()
 	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  "] ENTERED Critical Section at lamport clock " + strconv.Itoa(int(node.lamportClock)))
+	fmt.Println("Doing Critical Stuff...");
 }
 
 func leaveCriticalSection(){
