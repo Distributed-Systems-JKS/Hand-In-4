@@ -19,18 +19,15 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ClientServer_RequestAccess_FullMethodName  = "/grpc.ClientServer/RequestAccess"
-	ClientServer_ReplyToRequest_FullMethodName = "/grpc.ClientServer/ReplyToRequest"
+	ClientServer_RequestAccess_FullMethodName = "/grpc.ClientServer/RequestAccess"
 )
 
 // ClientServerClient is the client API for ClientServer service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ClientServerClient interface {
-	// Called whenever a node wants to request access to the criticsl section
-	RequestAccess(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
-	// Called whenever a node replies to a peer's request
-	ReplyToRequest(ctx context.Context, in *Response, opts ...grpc.CallOption) (*Empty, error)
+	// Called whenever a node wants to request access to the critical section
+	RequestAccess(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error)
 }
 
 type clientServerClient struct {
@@ -41,20 +38,10 @@ func NewClientServerClient(cc grpc.ClientConnInterface) ClientServerClient {
 	return &clientServerClient{cc}
 }
 
-func (c *clientServerClient) RequestAccess(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
+func (c *clientServerClient) RequestAccess(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Response)
+	out := new(Message)
 	err := c.cc.Invoke(ctx, ClientServer_RequestAccess_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *clientServerClient) ReplyToRequest(ctx context.Context, in *Response, opts ...grpc.CallOption) (*Empty, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Empty)
-	err := c.cc.Invoke(ctx, ClientServer_ReplyToRequest_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -65,10 +52,8 @@ func (c *clientServerClient) ReplyToRequest(ctx context.Context, in *Response, o
 // All implementations must embed UnimplementedClientServerServer
 // for forward compatibility.
 type ClientServerServer interface {
-	// Called whenever a node wants to request access to the criticsl section
-	RequestAccess(context.Context, *Request) (*Response, error)
-	// Called whenever a node replies to a peer's request
-	ReplyToRequest(context.Context, *Response) (*Empty, error)
+	// Called whenever a node wants to request access to the critical section
+	RequestAccess(context.Context, *Message) (*Message, error)
 	mustEmbedUnimplementedClientServerServer()
 }
 
@@ -79,11 +64,8 @@ type ClientServerServer interface {
 // pointer dereference when methods are called.
 type UnimplementedClientServerServer struct{}
 
-func (UnimplementedClientServerServer) RequestAccess(context.Context, *Request) (*Response, error) {
+func (UnimplementedClientServerServer) RequestAccess(context.Context, *Message) (*Message, error) {
 	return nil, status.Error(codes.Unimplemented, "method RequestAccess not implemented")
-}
-func (UnimplementedClientServerServer) ReplyToRequest(context.Context, *Response) (*Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "method ReplyToRequest not implemented")
 }
 func (UnimplementedClientServerServer) mustEmbedUnimplementedClientServerServer() {}
 func (UnimplementedClientServerServer) testEmbeddedByValue()                      {}
@@ -107,7 +89,7 @@ func RegisterClientServerServer(s grpc.ServiceRegistrar, srv ClientServerServer)
 }
 
 func _ClientServer_RequestAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Request)
+	in := new(Message)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -119,25 +101,7 @@ func _ClientServer_RequestAccess_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: ClientServer_RequestAccess_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientServerServer).RequestAccess(ctx, req.(*Request))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ClientServer_ReplyToRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Response)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ClientServerServer).ReplyToRequest(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ClientServer_ReplyToRequest_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientServerServer).ReplyToRequest(ctx, req.(*Response))
+		return srv.(ClientServerServer).RequestAccess(ctx, req.(*Message))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -152,10 +116,6 @@ var ClientServer_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RequestAccess",
 			Handler:    _ClientServer_RequestAccess_Handler,
-		},
-		{
-			MethodName: "ReplyToRequest",
-			Handler:    _ClientServer_ReplyToRequest_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
