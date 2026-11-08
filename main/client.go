@@ -43,9 +43,9 @@ func makeClient(port string) {
 	}
 
 
-	go enter(clients)
-
-	
+	for{
+		enter(clients)
+	}
 
 	
 }
@@ -69,11 +69,11 @@ func enter(clients[2] proto.ClientServerClient) {
 	node.mu.Unlock()
 
 
-	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  "] state changed to " + node.state + " at lamport clock " + strconv.Itoa(int(node.lamportClock)))
+	//algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  " " + node.state + "] state changed to " + node.state + " at lamport clock " + strconv.Itoa(int(node.lamportClock)))
 
 	//adding 2 to the waitgroup, so the rest of the code finishes when 2 go-routines are done
 	wg.Add(2)
-	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +"] is sending access request with timestamp " + strconv.Itoa(int(node.timestamp)) + " to all other nodes at lamport clock " + strconv.Itoa(int(node.lamportClock)))
+	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  " " + node.state + "] is sending access request with timestamp " + strconv.Itoa(int(node.timestamp)) + " to all other nodes at lamport clock " + strconv.Itoa(int(node.lamportClock)))
 	for i := range clients{
 		go func(i int){
 			defer wg.Done() //when this go-routine is finished, we "mark" it as done
@@ -89,7 +89,7 @@ func enter(clients[2] proto.ClientServerClient) {
 		node.lamportClock = max(node.lamportClock,reply.GetTimestamp()) + 1
 		node.mu.Unlock()
 
-		algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  "] got a reply from Node" + strconv.Itoa(int(reply.Id)) + " at lamport clock " + strconv.Itoa(int(node.lamportClock)))
+		algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  " " + node.state + "] got a reply from Node" + strconv.Itoa(int(reply.Id)) + " at lamport clock " + strconv.Itoa(int(node.lamportClock)))
 		time.Sleep(time.Duration(1)*time.Second)
 
 	}(i)
@@ -116,7 +116,7 @@ func inCriticalSection(){
 	// -- UPDATING LAMPORT CLOCK --
 	node.lamportClock++
 	node.mu.Unlock()
-	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  "] ENTERED Critical Section at lamport clock " + strconv.Itoa(int(node.lamportClock)))
+	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  " " + node.state + "] ENTERED Critical Section at lamport clock " + strconv.Itoa(int(node.lamportClock)))
 	fmt.Println("Doing Critical Stuff...");
 }
 
@@ -126,7 +126,7 @@ func leaveCriticalSection(){
 	// -- UPDATING LAMPORT CLOCK --
 	node.lamportClock++
 	node.mu.Unlock()
-	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  "] LEFT Critical Section and REPLIED to all in que at lamport clock " + strconv.Itoa(int(node.lamportClock)))
+	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  " " + node.state + "] LEFT Critical Section and REPLIED to all in que at lamport clock " + strconv.Itoa(int(node.lamportClock)))
 	node.mu.Lock()
 	//close channel, so it will no longer block RequestAccess and this node can now reply to other requests
 	close(node.requestQueue)
