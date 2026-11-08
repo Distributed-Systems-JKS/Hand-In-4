@@ -76,7 +76,7 @@ func enter(clients[2] proto.ClientServerClient) {
 	for i := range clients{
 		go func(i int){
 			defer wg.Done() //when this go-routine is finished, we "mark" it as done
-			reply, err := clients[i].RequestAccess(context.Background(), &proto.Request{Id: node.id, Timestamp: node.timestamp}, grpc.WaitForReady(true))
+			reply, err := clients[i].RequestAccess(context.Background(), &proto.Message{Id: node.id, Timestamp: node.timestamp}, grpc.WaitForReady(true))
 		
 		if err != nil {
 			log.Printf("Error with reply", err)

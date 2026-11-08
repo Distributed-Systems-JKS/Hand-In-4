@@ -31,7 +31,7 @@ type server struct {
 }
 
 // Implementing RequestAccess method defined in the .proto file
-func (s *server) RequestAccess(ctx context.Context, req *proto.Request) (*proto.Response, error) {
+func (s *server) RequestAccess(ctx context.Context, req *proto.Message) (*proto.Message, error) {
 	node.mu.Lock()
 	//Lamport clock sync
 	node.lamportClock = max(node.lamportClock, req.GetTimestamp()) + 1
@@ -54,7 +54,7 @@ func (s *server) RequestAccess(ctx context.Context, req *proto.Request) (*proto.
 		} else{
 			node.lamportClock++
 			algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  "] is in state " + node.state + " request timestamp is " + strconv.Itoa(int(req.Timestamp)) + " and Node timestamp is " +  strconv.Itoa(int(node.timestamp)) + " so is replying to Node" + strconv.Itoa(int(req.Id)) + " at lamport clock " + strconv.Itoa(int(node.lamportClock)))
-			return &proto.Response{Id: node.id, Timestamp: node.lamportClock, Permission: true}, nil // Permission her kommer an på response??
+			return &proto.Message{Id: node.id, Timestamp: node.lamportClock}, nil // Permission her kommer an på response??
 		}
 	}
 
@@ -67,7 +67,7 @@ func (s *server) RequestAccess(ctx context.Context, req *proto.Request) (*proto.
 
 	node.lamportClock++
 	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  "] is in state " + node.state + " and is now replying to Node" + strconv.Itoa(int(req.Id)) + " at lamport clock " + strconv.Itoa(int(node.lamportClock)))
-	return &proto.Response{Id: node.id, Timestamp: node.lamportClock, Permission: true}, nil 
+	return &proto.Message{Id: node.id, Timestamp: node.lamportClock}, nil 
 }
 
 
