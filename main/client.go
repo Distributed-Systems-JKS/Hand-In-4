@@ -54,7 +54,8 @@ func enter(clients[2] proto.ClientServerClient) {
 	var wg sync.WaitGroup
 
 	timer := rand.Intn(7) + 3 //random int from 3 to 10
-	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  "] waiting " + strconv.Itoa(int(timer)) + " until requesting access at lamport clock " + strconv.Itoa(int(node.lamportClock)))
+	// Doesnt need to be logged so just printing in terminal for our own sake to see that the program is running but just has a delay.. 
+	fmt.Println("[Node" + strconv.Itoa(int(node.id)) +  "] waiting " + strconv.Itoa(int(timer)) + " until requesting access")
 	time.Sleep(time.Duration(timer)*time.Second)
 	
 	node.mu.Lock()
@@ -68,7 +69,7 @@ func enter(clients[2] proto.ClientServerClient) {
 	node.mu.Unlock()
 
 
-	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  "] state is " + node.state + " at lamport clock " + strconv.Itoa(int(node.lamportClock)))
+	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  "] state changed to " + node.state + " at lamport clock " + strconv.Itoa(int(node.lamportClock)))
 
 	//adding 2 to the waitgroup, so the rest of the code finishes when 2 go-routines are done
 	wg.Add(2)
@@ -115,7 +116,7 @@ func inCriticalSection(){
 	// -- UPDATING LAMPORT CLOCK --
 	node.lamportClock++
 	node.mu.Unlock()
-	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  "] is in Critical Section and state is " + node.state + " at lamport clock " + strconv.Itoa(int(node.lamportClock)))
+	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  "] ENTERED Critical Section at lamport clock " + strconv.Itoa(int(node.lamportClock)))
 }
 
 func leaveCriticalSection(){
@@ -124,7 +125,7 @@ func leaveCriticalSection(){
 	// -- UPDATING LAMPORT CLOCK --
 	node.lamportClock++
 	node.mu.Unlock()
-	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  "] left Critical Section and state is " + node.state + " at lamport clock " + strconv.Itoa(int(node.lamportClock)))
+	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  "] LEFT Critical Section and REPLIED to all in que at lamport clock " + strconv.Itoa(int(node.lamportClock)))
 	node.mu.Lock()
 	//close channel, so it will no longer block RequestAccess and this node can now reply to other requests
 	close(node.requestQueue)

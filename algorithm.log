@@ -1,64 +1,33 @@
-[LOG]2026/11/08 12:54:08 [Node0] waiting 4 until requesting access at lamport clock 0
-[LOG]2026/11/08 12:54:12 [Node0] state is WANTED at lamport clock 1
-[LOG]2026/11/08 12:54:12 [Node0] is sending access request with timestamp 1 to all other nodes at lamport clock 1
-[LOG]2026/11/08 12:54:47 [Node1] waiting 8 until requesting access at lamport clock 0
-[LOG]2026/11/08 12:54:55 [Node1] state is WANTED at lamport clock 1
-[LOG]2026/11/08 12:54:55 [Node1] is sending access request with timestamp 1 to all other nodes at lamport clock 1
-[LOG]2026/11/08 12:54:55 [Node0] received access request from Node1 at lamport clock 2
-[LOG]2026/11/08 12:54:55 [Node0] is in state WANTED request timestamp is 1 and Node timestamp is 1 so is queueing request from Node1 at lamport clock 2
-[LOG]2026/11/08 12:54:55 [Node2] waiting 8 until requesting access at lamport clock 0
-[LOG]2026/11/08 12:54:56 [Node2] received access request from Node1 at lamport clock 2
-[LOG]2026/11/08 12:54:56 [Node2] is in state RELEASED and is now replying to Node1 at lamport clock 3
-[LOG]2026/11/08 12:54:56 [Node1] got a reply from Node2 at lamport clock 4
-[LOG]2026/11/08 12:54:56 [Node2] received access request from Node0 at lamport clock 4
-[LOG]2026/11/08 12:54:56 [Node2] is in state RELEASED and is now replying to Node0 at lamport clock 5
-[LOG]2026/11/08 12:54:56 [Node0] got a reply from Node2 at lamport clock 6
-[LOG]2026/11/08 12:54:59 [Node1] received access request from Node0 at lamport clock 5
-[LOG]2026/11/08 12:54:59 [Node1] is in state WANTED request timestamp is 1 and Node timestamp is 1 so is replying to Node0 at lamport clock 6
-[LOG]2026/11/08 12:54:59 [Node0] got a reply from Node1 at lamport clock 7
-[LOG]2026/11/08 12:55:00 [Node0] is in Critical Section and state is HELD at lamport clock 8
-[LOG]2026/11/08 12:55:01 [Node0] left Critical Section and state is RELEASED at lamport clock 9
-[LOG]2026/11/08 12:55:01 [Node0] is in state RELEASED and is now replying to Node1 at lamport clock 10
-[LOG]2026/11/08 12:55:03 [Node2] state is WANTED at lamport clock 6
-[LOG]2026/11/08 12:55:03 [Node2] is sending access request with timestamp 6 to all other nodes at lamport clock 6
-[LOG]2026/11/08 12:55:03 [Node0] received access request from Node2 at lamport clock 11
-[LOG]2026/11/08 12:55:03 [Node0] is in state RELEASED and is now replying to Node2 at lamport clock 12
-[LOG]2026/11/08 12:55:03 [Node2] got a reply from Node0 at lamport clock 13
-[LOG]2026/11/08 13:14:44 [Node2] is in Critical Section and state is HELD at lamport clock 14
-[LOG]2026/11/08 13:19:58 [Node0] waiting 5 until requesting access at lamport clock 0
-[LOG]2026/11/08 13:31:21 [Node0] waiting 4 until requesting access at lamport clock 0
-[LOG]2026/11/08 13:31:22 [Node1] waiting 7 until requesting access at lamport clock 0
-[LOG]2026/11/08 13:31:23 [Node2] waiting 5 until requesting access at lamport clock 0
-[LOG]2026/11/08 13:31:25 [Node0] state is WANTED at lamport clock 1
-[LOG]2026/11/08 13:31:25 [Node0] is sending access request with timestamp 1 to all other nodes at lamport clock 1
-[LOG]2026/11/08 13:31:25 [Node2] received access request from Node0 at lamport clock 2
-[LOG]2026/11/08 13:31:25 [Node1] received access request from Node0 at lamport clock 2
-[LOG]2026/11/08 13:31:25 [Node2] is in state RELEASED and is now replying to Node0 at lamport clock 3
-[LOG]2026/11/08 13:31:25 [Node1] is in state RELEASED and is now replying to Node0 at lamport clock 3
-[LOG]2026/11/08 13:31:25 [Node0] got a reply from Node2 at lamport clock 4
-[LOG]2026/11/08 13:31:25 [Node0] got a reply from Node1 at lamport clock 5
-[LOG]2026/11/08 13:31:26 [Node0] is in Critical Section and state is HELD at lamport clock 6
-[LOG]2026/11/08 13:31:28 [Node2] state is WANTED at lamport clock 4
-[LOG]2026/11/08 13:31:28 [Node2] is sending access request with timestamp 4 to all other nodes at lamport clock 4
-[LOG]2026/11/08 13:31:28 [Node0] received access request from Node2 at lamport clock 7
-[LOG]2026/11/08 13:31:28 [Node0] is in state HELD and is queueing request from Node2 at lamport clock 7
-[LOG]2026/11/08 13:31:28 [Node1] received access request from Node2 at lamport clock 5
-[LOG]2026/11/08 13:31:28 [Node1] is in state RELEASED and is now replying to Node2 at lamport clock 6
-[LOG]2026/11/08 13:31:28 [Node2] got a reply from Node1 at lamport clock 7
-[LOG]2026/11/08 13:31:29 [Node1] state is WANTED at lamport clock 7
-[LOG]2026/11/08 13:31:29 [Node1] is sending access request with timestamp 7 to all other nodes at lamport clock 7
-[LOG]2026/11/08 13:31:29 [Node0] received access request from Node1 at lamport clock 8
-[LOG]2026/11/08 13:31:29 [Node2] received access request from Node1 at lamport clock 8
-[LOG]2026/11/08 13:31:29 [Node0] is in state HELD and is queueing request from Node1 at lamport clock 8
-[LOG]2026/11/08 13:31:29 [Node2] is in state WANTED request timestamp is 7 and Node timestamp is 4 so is queueing request from Node1 at lamport clock 8
-[LOG]2026/11/08 13:31:31 [Node0] left Critical Section and state is RELEASED at lamport clock 9
-[LOG]2026/11/08 13:31:31 [Node0] is in state RELEASED and is now replying to Node1 at lamport clock 10
-[LOG]2026/11/08 13:31:31 [Node0] is in state RELEASED and is now replying to Node2 at lamport clock 11
-[LOG]2026/11/08 13:31:31 [Node2] got a reply from Node0 at lamport clock 12
-[LOG]2026/11/08 13:31:31 [Node1] got a reply from Node0 at lamport clock 12
-[LOG]2026/11/08 13:31:32 [Node2] is in Critical Section and state is HELD at lamport clock 13
-[LOG]2026/11/08 13:31:40 [Node2] left Critical Section and state is RELEASED at lamport clock 14
-[LOG]2026/11/08 13:31:40 [Node2] is in state RELEASED and is now replying to Node1 at lamport clock 15
-[LOG]2026/11/08 13:31:40 [Node1] got a reply from Node2 at lamport clock 16
-[LOG]2026/11/08 13:31:41 [Node1] is in Critical Section and state is HELD at lamport clock 17
-[LOG]2026/11/08 13:31:49 [Node1] left Critical Section and state is RELEASED at lamport clock 18
+[LOG]2026/11/08 14:46:03 [Node0] state changed to WANTED at lamport clock 1
+[LOG]2026/11/08 14:46:03 [Node0] is sending access request with timestamp 1 to all other nodes at lamport clock 1
+[LOG]2026/11/08 14:46:03 [Node1] received access request from Node0 (timestamp: 1) at lamport clock 2
+[LOG]2026/11/08 14:46:03 [Node2] received access request from Node0 (timestamp: 1) at lamport clock 2
+[LOG]2026/11/08 14:46:03 [Node1] is in state RELEASED and is now replying to Node0 at lamport clock 3
+[LOG]2026/11/08 14:46:03 [Node2] is in state RELEASED and is now replying to Node0 at lamport clock 3
+[LOG]2026/11/08 14:46:03 [Node0] got a reply from Node2 at lamport clock 4
+[LOG]2026/11/08 14:46:03 [Node0] got a reply from Node1 at lamport clock 5
+[LOG]2026/11/08 14:46:04 [Node0] ENTERED Critical Section at lamport clock 6
+[LOG]2026/11/08 14:46:06 [Node1] state changed to WANTED at lamport clock 4
+[LOG]2026/11/08 14:46:06 [Node1] is sending access request with timestamp 4 to all other nodes at lamport clock 4
+[LOG]2026/11/08 14:46:06 [Node2] received access request from Node1 (timestamp: 4) at lamport clock 5
+[LOG]2026/11/08 14:46:06 [Node0] received access request from Node1 (timestamp: 4) at lamport clock 7
+[LOG]2026/11/08 14:46:06 [Node2] is in state RELEASED and is now replying to Node1 at lamport clock 6
+[LOG]2026/11/08 14:46:06 [Node0] DEFERRED request from Node1
+[LOG]2026/11/08 14:46:06 [Node1] got a reply from Node2 at lamport clock 7
+[LOG]2026/11/08 14:46:07 [Node2] state changed to WANTED at lamport clock 7
+[LOG]2026/11/08 14:46:07 [Node2] is sending access request with timestamp 7 to all other nodes at lamport clock 7
+[LOG]2026/11/08 14:46:07 [Node1] received access request from Node2 (timestamp: 7) at lamport clock 8
+[LOG]2026/11/08 14:46:07 [Node1] DEFERRED request from Node2
+[LOG]2026/11/08 14:46:07 [Node0] received access request from Node2 (timestamp: 7) at lamport clock 8
+[LOG]2026/11/08 14:46:07 [Node0] DEFERRED request from Node2
+[LOG]2026/11/08 14:46:13 [Node0] LEFT Critical Section at lamport clock 9
+[LOG]2026/11/08 14:46:13 [Node0] is in state RELEASED and is now replying to Node1 at lamport clock 10
+[LOG]2026/11/08 14:46:13 [Node0] is in state RELEASED and is now replying to Node2 at lamport clock 11
+[LOG]2026/11/08 14:46:13 [Node1] got a reply from Node0 at lamport clock 12
+[LOG]2026/11/08 14:46:13 [Node2] got a reply from Node0 at lamport clock 12
+[LOG]2026/11/08 14:46:14 [Node1] ENTERED Critical Section at lamport clock 13
+[LOG]2026/11/08 14:46:21 [Node1] LEFT Critical Section at lamport clock 14
+[LOG]2026/11/08 14:46:21 [Node1] is in state RELEASED and is now replying to Node2 at lamport clock 15
+[LOG]2026/11/08 14:46:21 [Node2] got a reply from Node1 at lamport clock 16
+[LOG]2026/11/08 14:46:22 [Node2] ENTERED Critical Section at lamport clock 17
+[LOG]2026/11/08 14:46:31 [Node2] LEFT Critical Section at lamport clock 18
