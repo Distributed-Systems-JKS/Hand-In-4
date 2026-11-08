@@ -35,7 +35,7 @@ func (s *server) RequestAccess(ctx context.Context, req *proto.Message) (*proto.
 	node.mu.Lock()
 	//Lamport clock sync
 	node.lamportClock = max(node.lamportClock, req.GetTimestamp()) + 1
-	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  "] received access request from Node" + strconv.Itoa(int(req.Id)) + " (timestamp: " + strconv.Itoa(int(req.Timestamp)) + ") at lamport clock " + strconv.Itoa(int(node.lamportClock)))
+	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  " " + node.state + "] received access request from Node" + strconv.Itoa(int(req.Id)) + " (timestamp: " + strconv.Itoa(int(req.Timestamp)) + ") at lamport clock " + strconv.Itoa(int(node.lamportClock)))
 	
 	//making a copy of the queue to ensure that it will not be changed by others
 	ch := node.requestQueue
@@ -45,15 +45,15 @@ func (s *server) RequestAccess(ctx context.Context, req *proto.Message) (*proto.
 
 	if node.state == "HELD" {
 		useDefer = true
-		algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  "] DEFERRED request from Node" + strconv.Itoa(int(req.Id)))
+		algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  " " + node.state + "] DEFERRED request from Node" + strconv.Itoa(int(req.Id)) + " (node timestamp: " + strconv.Itoa(int(node.timestamp)) +", req timestamp: " + strconv.Itoa(int(req.GetTimestamp())) + ")")
 	} else if node.state == "WANTED" {
 		//Check if the node in CS has a higher timestamp than the request we are currently processing. If it does, we will defer the reply until we are done with the CS.
 		if node.timestamp < req.GetTimestamp() || (node.timestamp == req.GetTimestamp() && node.id < req.GetId()) {
 			useDefer = true //defer if s.state == WANTED
-			algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  "] DEFERRED request from Node" + strconv.Itoa(int(req.Id)))
+			algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  " " + node.state + "] DEFERRED request from Node" + strconv.Itoa(int(req.Id))  + " (node timestamp: " + strconv.Itoa(int(node.timestamp)) +", req timestamp: " + strconv.Itoa(int(req.GetTimestamp())) + ")")
 		} else{
 			node.lamportClock++
-			algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  "] REPLIED immediately to Node" + strconv.Itoa(int(req.Id)) + " at lamport clock " + strconv.Itoa(int(node.lamportClock)))
+			algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  " " + node.state + "] REPLIED immediately to Node" + strconv.Itoa(int(req.Id)) + " at lamport clock " + strconv.Itoa(int(node.lamportClock)) + "(node timestamp: " + strconv.Itoa(int(node.timestamp)) +", req timestamp: " + strconv.Itoa(int(req.GetTimestamp())) + ")")
 			return &proto.Message{Id: node.id, Timestamp: node.lamportClock}, nil
 		}
 	}
@@ -65,7 +65,7 @@ func (s *server) RequestAccess(ctx context.Context, req *proto.Message) (*proto.
 	}
 	
 	node.lamportClock++
-	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  "] is in state " + node.state + " and REPLIED to Node" + strconv.Itoa(int(req.Id)) + " at lamport clock " + strconv.Itoa(int(node.lamportClock)))
+	algorithmLogger.Println("[Node" + strconv.Itoa(int(node.id)) +  " " + node.state + "] REPLIED to Node" + strconv.Itoa(int(req.Id)) + " at lamport clock " + strconv.Itoa(int(node.lamportClock)))
 	return &proto.Message{Id: node.id, Timestamp: node.lamportClock}, nil 
 }
 
